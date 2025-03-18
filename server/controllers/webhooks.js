@@ -53,7 +53,7 @@ const clerWebhooks = async (req, res) => {
                 break;
 
             }
-
+ 
             default:
                 break;
         }
