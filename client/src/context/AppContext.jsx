@@ -2,12 +2,17 @@ import { createContext, useEffect, useState } from "react";
 import { dummyCourses } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import humanizeDuration from "humanize-duration";
+import { useAuth, useUser } from "@clerk/clerk-react";
+
 export const AppContext = createContext();
 
 export const AppContextprovider = (props) => {
   const currency = import.meta.env.VITE_CURRENCY;
 
   const navigate = useNavigate();
+
+  const { getToken } = useAuth();
+  const { user } = useUser();
 
   const [allCourses, setAllCourses] = useState([]);
   const [isEducator, setIsEducator] = useState(true);
@@ -35,7 +40,7 @@ export const AppContextprovider = (props) => {
   };
 
   // function to calculate the course duration
- 
+
   const calculateCourseDuration = (course) => {
     let time = 0;
 
@@ -73,6 +78,23 @@ export const AppContextprovider = (props) => {
     fetchAllCourses();
     fetchUserEnrolledCourses();
   }, []);
+
+  const logToken = async () => {
+    console.log(await getToken());
+  };
+
+  //   const logToken = async () => {
+  //     const token = await getToken();
+  //     const payload = JSON.parse(atob(token.split(".")[1])); // Decode JWT
+  //     console.log("Token Expiry:", new Date(payload.exp * 1000)); // Convert to readable time
+  // };
+
+  useEffect(() => {
+    if (user) {
+      logToken();
+      console.log(user);
+    }
+  }, [user]);
 
   const value = {
     currency,
